@@ -23,8 +23,29 @@
         </p>
       </div>
 
-      <form class="flex flex-col gap-6">
-        <!-- Nombre -->
+      <form
+        id="contact-form"
+        name="contacto"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="flex flex-col gap-6"
+      >
+        <input type="hidden" name="form-name" value="contacto" />
+
+        <!-- Campo antispam -->
+        <p class="absolute left-[-9999px]" aria-hidden="true">
+          <label>
+            No completar:
+            <input
+              type="text"
+              name="bot-field"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </label>
+        </p>
+
         <div class="flex flex-col gap-2">
           <label
             for="fname"
@@ -37,14 +58,13 @@
           <input
             type="text"
             id="fname"
-            name="fname"
+            name="nombre"
             required
             autocomplete="name"
             class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-greyRGA focus:ring-2 focus:ring-blueRGA/20"
           />
         </div>
 
-        <!-- Correo -->
         <div class="flex flex-col gap-2">
           <label
             for="fcorreo"
@@ -57,14 +77,13 @@
           <input
             type="email"
             id="fcorreo"
-            name="fcorreo"
+            name="email"
             required
             autocomplete="email"
             class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-greyRGA focus:ring-2 focus:ring-blueRGA/20"
           />
         </div>
 
-        <!-- Mensaje -->
         <div class="flex flex-col gap-2">
           <label
             for="fmensaje"
@@ -76,7 +95,7 @@
 
           <textarea
             id="fmensaje"
-            name="fmensaje"
+            name="mensaje"
             rows="5"
             required
             class="w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none transition focus:border-greyRGA focus:ring-2 focus:ring-blueRGA/20"
@@ -84,11 +103,18 @@
         </div>
 
         <button
+          id="submit-button"
           type="submit"
-          class="w-fit rounded-lg bg-white px-8 py-3 font-semibold text-blueRGA transition hover:opacity-90"
+          class="w-fit rounded-lg bg-white px-8 py-3 font-semibold text-blueRGA transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Enviar mensaje
         </button>
+
+        <p
+          id="form-status"
+          class="hidden rounded-lg px-4 py-3 font-medium"
+          aria-live="polite"
+        ></p>
       </form>
     </div>
 
@@ -149,3 +175,62 @@
     </div>
   </div>
 </section>
+
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#contact-form");
+  const status = document.querySelector<HTMLParagraphElement>("#form-status");
+  const button =
+    document.querySelector<HTMLButtonElement>("#submit-button");
+
+  form?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!status || !button) return;
+
+    button.disabled = true;
+    button.textContent = "Enviando...";
+
+    status.className = "hidden";
+
+    const formData = new FormData(form);
+    const body = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+      body.append(key, value.toString());
+    }
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: body.toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
+
+      form.reset();
+
+      status.textContent =
+        "Mensaje enviado correctamente. Nos comunicaremos contigo pronto.";
+
+      status.className =
+        "rounded-lg bg-green-100 px-4 py-3 font-medium text-green-800";
+    } catch (error) {
+      console.error("Error al enviar el formulario:", error);
+
+      status.textContent =
+        "No se pudo enviar el mensaje. Inténtalo nuevamente o contáctanos por WhatsApp.";
+
+      status.className =
+        "rounded-lg bg-red-100 px-4 py-3 font-medium text-red-800";
+    } finally {
+      button.disabled = false;
+      button.textContent = "Enviar mensaje";
+    }
+  });
+</script>
