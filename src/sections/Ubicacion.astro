@@ -1,0 +1,36 @@
+---
+const address = encodeURIComponent(
+  "Av. Monterrico Chico Nro. 436 Santiago de Surco 15023"
+);
+
+const mapUrl =
+  `https://www.google.com/maps?q=${address}&output=embed`;
+---
+
+<section id="ubicacion" class="bg-white px-6 py-16 md:px-12">
+  <div class="mx-auto flex max-w-7xl flex-col gap-10">
+    <h2 class="text-center text-4xl font-bold text-blueRGA">
+      NUESTRA UBICACIÓN
+    </h2>
+
+    <div class="overflow-hidden rounded-xl shadow-lg">
+      <iframe
+        src={mapUrl}
+        title="Ubicación de Consorcio RGA"
+        class="h-87.5 w-full border-0 md:h-125"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    </div>
+
+    <a 
+      href="https://maps.app.goo.gl/LhzEtoWkXP2vMWp78"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="w-fit self-center rounded-xl bg-blueRGA px-6 py-3 font-medium text-white transition-transform hover:scale-105"
+    >
+      Abrir en Google Maps
+    </a>
+  </div>
+</section>

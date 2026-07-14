@@ -1,0 +1,24 @@
+---
+import CategoriaCardAstroComponent from "../components/CategoriaCard.astro"
+const CardsInfo = [
+  { image: "/Categoria1.png", title:"LIMPIEZA DE HOGAR", text:"Insumos de alto rendimiento para el mantenimiento integral de oficinas, edificios y áreas comunes." },
+  { image: "/Categoria2.png", title:"LIMPIEZA DE COCINA", text:"Desinfectantes de grado alimenticio para la eliminación de grasas en entornos industriales y comerciales." },
+  { image: "/Categoria3.png", title:"LIMPIEZA DE ROPA", text:"Detergentes industriales que garantizan el máximo cuidado de las fibras y eficiencia en el lavado." },
+  { image: "/Categoria4.png", title:"LIMPIEZA DE BAÑOS", text:"Fórmulas bactericidas y suministros de alta capacidad diseñados para áreas de uso frecuente." },
+  { image: "/Categoria5.png", title:"ARTÍCULOS DE PISCINA", text:"Soluciones químicas especializadas para el tratamiento, seguridad y mantenimiento cristalino del agua." },
+  { image: "/Categoria6.png", title:"E.P.P.", text:"Implementos de seguridad bajo normativa para proteger la integridad de su personal operativo." },
+];
+---
+
+<section id="categorias" class="min-h-dvh w-full bg-white items-center content-center text-center grid grid-cols-1 gap-5 text-4xl pt-10">
+    <h1 class="font-bold text-blueRGA">CATEGORÍAS</h1>
+    <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center gap-10 p-5 md:p-15 lg:px-30">
+        {
+          CardsInfo.map((CardInfo) => (
+            <li>
+                <CategoriaCardAstroComponent image={CardInfo.image} title={CardInfo.title} text={CardInfo.text}></CategoriaCardAstroComponent>
+            </li>
+          ))
+        }
+      </ul>
+</section>

@@ -1,0 +1,210 @@
+---
+const links = [
+  { label: "Inicio", href: "/home" },
+  { label: "Nosotros", href: "/about-us" },
+  { label: "Catálogo", href: "/catalog" },
+  { label: "Contacto", href: "/contact" },
+];
+
+const normalizePath = (path: string): string => {
+  const normalized = path.replace(/\/$/, "");
+  return normalized || "/";
+};
+
+const currentPath = normalizePath(Astro.url.pathname);
+---
+
+<header
+  id="toolbar"
+  class="fixed inset-x-0 top-0 z-50 w-full bg-greyRGA shadow-lg"
+>
+  <div
+    class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-20 md:px-8 lg:px-12"
+  >
+    <a href="/home" class="flex items-center">
+      <img
+        src="/consorcioLogo.png"
+        alt="Consorcio RGA"
+        class="h-12 w-auto object-contain md:h-16"
+      />
+    </a>
+
+    <!-- Navegación de escritorio -->
+    <nav
+      class="hidden md:block"
+      aria-label="Navegación principal"
+    >
+      <ul class="flex items-center gap-8">
+{
+      links.map((link) => {
+        const isActive =
+          currentPath === normalizePath(link.href);
+
+        return (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive ? "page" : undefined}
+              class:list={[
+                "relative py-2 text-base font-medium transition-colors duration-300",
+                "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full",
+                "after:origin-left after:bg-blueRGA after:transition-transform after:duration-300",
+                isActive
+                  ? "text-blueRGA after:scale-x-100"
+                  : "text-black after:scale-x-0 hover:text-blueRGA hover:after:scale-x-100",
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        );
+      })
+    }
+      </ul>
+    </nav>
+
+    <!-- Botón hamburguesa -->
+    <button
+      id="menu-button"
+      type="button"
+      class="flex size-10 items-center justify-center rounded-md text-blueRGA transition-colors hover:bg-gray-100 md:hidden"
+      aria-label="Abrir menú"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+    >
+      <svg
+        id="menu-open-icon"
+        class="size-7"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+
+      <svg
+        id="menu-close-icon"
+        class="hidden size-7"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M6 6l12 12M18 6L6 18"
+        />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Menú móvil superpuesto -->
+  <nav
+    id="mobile-menu"
+    class="fixed inset-x-0 bottom-0 top-16 z-40 hidden overflow-y-auto bg-white md:hidden"
+    aria-label="Navegación móvil"
+    aria-hidden="true"
+    aria-modal="true"
+    role="dialog"
+  >
+    <div
+      class="flex min-h-full items-center justify-center px-6 py-10"
+    >
+      <ul class="flex w-full max-w-sm flex-col gap-3 text-center">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="mobile-menu-link block border-b-2 opacity-75 px-6 py-4 text-xl font-semibold text-blueRGA transition-colors hover:bg-blueRGA hover:text-white"
+              >
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const menuButton =
+    document.querySelector<HTMLButtonElement>("#menu-button");
+
+  const mobileMenu =
+    document.querySelector<HTMLElement>("#mobile-menu");
+
+  const openIcon =
+    document.querySelector<SVGElement>("#menu-open-icon");
+
+  const closeIcon =
+    document.querySelector<SVGElement>("#menu-close-icon");
+
+  const mobileLinks =
+    document.querySelectorAll<HTMLAnchorElement>(".mobile-menu-link");
+
+  const mainContent =
+    document.querySelector<HTMLElement>("main");
+
+  function setMenuState(isOpen: boolean): void {
+    mobileMenu?.classList.toggle("hidden", !isOpen);
+
+    openIcon?.classList.toggle("hidden", isOpen);
+    closeIcon?.classList.toggle("hidden", !isOpen);
+
+    menuButton?.setAttribute("aria-expanded", String(isOpen));
+    menuButton?.setAttribute(
+      "aria-label",
+      isOpen ? "Cerrar menú" : "Abrir menú",
+    );
+
+    mobileMenu?.setAttribute("aria-hidden", String(!isOpen));
+
+    // Evita que la página detrás del menú pueda desplazarse.
+    document.body.classList.toggle("overflow-hidden", isOpen);
+
+    // Evita clics y navegación con teclado en el contenido de fondo.
+    if (isOpen) {
+      mainContent?.setAttribute("inert", "");
+    } else {
+      mainContent?.removeAttribute("inert");
+    }
+  }
+
+  menuButton?.addEventListener("click", () => {
+    const isOpen =
+      menuButton.getAttribute("aria-expanded") === "true";
+
+    setMenuState(!isOpen);
+  });
+
+  mobileLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      setMenuState(false);
+    });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      setMenuState(false);
+    }
+  });
+
+  // Limpia el estado si se cambia de móvil a escritorio.
+  window
+    .matchMedia("(min-width: 768px)")
+    .addEventListener("change", (event) => {
+      if (event.matches) {
+        setMenuState(false);
+      }
+    });
+</script>

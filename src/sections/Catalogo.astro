@@ -1,0 +1,48 @@
+---
+const pdfUrl = '/Cat.pdf';
+const pdfViewUrl = `${pdfUrl}#page=1&zoom=page-with&pagemode=none&navpanes=0&toolbar=0&`;
+---
+
+
+
+<section id="catalogo" class="min-h-dvh w-full bg-blueRGA">
+    <div class="grid min-h-dvh w-full grid-cols-1 md:grid-cols-2">
+        <div class="items-center justify-center h-[50dvh] w-full md:h-dvh hidden md:flex">
+            <iframe
+                src={pdfViewUrl}
+                title="Catalogo Consorcio RGA"
+                loading="lazy"
+                class="h-200 w-200 border-0 shadow-2xl "
+            ></iframe>
+        </div>
+        <div class="flex min-h-[50dvh] flex-col justify-center gap-6 px-6 py-12 text-white md:px-12 lg:min-h-dvh lg:px-16">
+            <h1 class="text-4xl font-bold text-yellowRGA">
+                <span class="md:hidden">MIRA &nbsp</span>
+
+                <span class="hidden md:inline">DESCARGA &nbsp</span>
+
+                NUESTRO CATÁLOGO
+            </h1>
+            <h2 class="text-white text-lg md:text-xl font-medium">TODO LO QUE TU OPERACIÓN NECESITA EN UN SOLO LUGAR</h2>
+            <p>Presentamos nuestro catálogo actualizado de suministros de limpieza y 
+                protección industrial. Diseñado para facilitar la gestión de compras 
+                de tu negocio, con fichas técnicas y soluciones adaptadas a cada sector.
+            </p>
+            <a
+                href={pdfUrl}
+                download="Catalogo-Consorcio-RGA.pdf"
+                class="w-fit rounded-md bg-yellowRGA px-6 py-3 font-semibold text-blueRGA hidden md:block"
+            >
+                Descargar PDF
+            </a>
+            <a
+                href={pdfUrl}
+                target="_blank"
+                rel="noopenar noreferrer"
+                class="w-fit rounded-md bg-yellowRGA px-6 py-3 font-semibold text-blueRGA md:hidden"
+            >
+                Abrir PDF
+            </a>
+        </div>
+	</div>
+</section>
